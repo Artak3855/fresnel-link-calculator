@@ -126,19 +126,22 @@
             </div>
         </div>
 
-        <!-- Wikipedia-style Detailed Scientific Documentation (Armenian) -->
+        <!-- Detailed Academic Documentation & Theoretical Foundations -->
         <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6">
             <h2 class="text-2xl font-bold text-cyan-300 border-b border-slate-700 pb-3">📚 Տեսական հիմնավորումներ և մաթեմատիկական մոդելներ</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 text-sm leading-relaxed">
                 <!-- Section 1: Fresnel Zone -->
                 <div class="space-y-4 bg-slate-900 p-6 rounded-xl border border-slate-700">
-                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">1. Ֆրենելի առաջին գոտու տեսությունը</h3>
+                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">1. Ֆրենելի առաջին գոտու տեսությունը և դիֆրակցիա</h3>
                     <p>
-                        Ռադիոալիքների տարածման ժամանակ ուղղակի տեսանելիության գծի (Line-of-Sight) շուրջ ձևավորվում են էլիպսաձև տարածություններ՝ <strong>Ֆրենելի գոտիներ</strong>։ 
+                        Ռադիոալիքների տարածման ժամանակ ուղղակի տեսանելիության գծի (Line-of-Sight) շուրջ ձևավորվում են էլիպսաձև տարածություններ՝ հայտնի որպես <strong>Ֆրենելի գոտիներ</strong>։ Համաձայն Հյույգենս-Ֆրենելի սկզբունքի՝ ալիքային ճակատի յուրաքանչյուր կետ հանդիսանում է երկրորդային ալիքների աղբյուր։
                     </p>
                     <p>
-                        Առաջին Ֆրենելի գոտու առավելագույն շառավիղը ($R_1$) խոչընդոտի կետում հաշվարկվում է հետևյալ բանաձևով.
+                        Առաջին Ֆրենելի գոտու ($F_1$) ներսում տարածվող ալիքները ընդունիչին են հասնում համաչափ փուլով՝ նպաստելով կառուցողական ինտերֆերենցիային։ Եթե տեղանքի խոչընդոտները մտնում են այս գոտի, առաջանում է սուր եզրային դիֆրակցիա (knife-edge diffraction), որը կտրուկ թուլացնում է ազդանշանը։
+                    </p>
+                    <p>
+                        Առավելագույն շառավիղը ($R_1$) խոչընդոտի կետում հաշվարկվում է հետևյալ բանաձևով.
                     </p>
                     
                     <div class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-center text-base shadow-inner overflow-x-auto">
@@ -146,21 +149,25 @@
                     </div>
 
                     <div class="space-y-1 text-xs text-slate-400">
-                        <p><strong class="text-slate-200">Նշանակությունները.</strong></p>
+                        <p><strong class="text-slate-200">Մաթեմատիկական փոփոխականներ․</strong></p>
                         <ul class="list-disc list-inside space-y-1 pl-2">
                             <li><strong class="text-cyan-400">$R_1$</strong> — Ֆրենելի առաջին գոտու շառավիղն է (մետր, m)</li>
-                            <li><strong class="text-cyan-400">$d_1, d_2$</strong> — Հեռավորություններն են կայաններից մինչև խոչընդոտ (կիլոմետր, km)</li>
+                            <li><strong class="text-cyan-400">$d_1$</strong> — Հեռավորությունն է հաղորդիչից մինչև խոչընդոտի կետը (կիլոմետր, km)</li>
+                            <li><strong class="text-cyan-400">$d_2$</strong> — Հեռավորությունն է խոչընդոտից մինչև ընդունիչ (կիլոմետր, km)</li>
                             <li><strong class="text-cyan-400">$f$</strong> — Աշխատանքային հաճախություն (Գիգահերց, GHz)</li>
                         </ul>
-                        <p class="pt-2 text-amber-400 font-medium">💡 Ինժեներական կանոն․ Դիֆրակցիոն կորուստները բացառելու համար խոչընդոտներից ազատ պետք է լինի առաջին Ֆրենելի գոտու առնվազն 60%-ը ($0.6 \cdot R_1$):</p>
+                        <p class="pt-2 text-amber-400 font-medium">💡 Ինժեներական կանոն․ Դիֆրակցիոն կորուստները բացառելու և ազատ տարածության պայմաններին մոտարկելու համար խոչընդոտներից ազատ պետք է լինի առաջին Ֆրենելի գոտու առնվազն 60%-ը ($h_{obs} \le 0.6 \cdot R_1$):</p>
                     </div>
                 </div>
 
                 <!-- Section 2: Link Budget -->
                 <div class="space-y-4 bg-slate-900 p-6 rounded-xl border border-slate-700">
-                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">2. Link Budget և FSPL Մոդելներ</h3>
+                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">2. Link Budget և FSPL Մոդելների վերլուծություն</h3>
                     <p>
-                        Link Budget-ը գնահատում է ազդանշանի հաշվեկշիռը հաղորդիչից մինչև ընդունիչ՝ հաշվի առնելով ազատ տարածության մարումը (FSPL):
+                        Link Budget-ը ռադիոհղման էներգետիկ հաշվեկշիռն է, որը գնահատում է ազդանշանի հզորության փոփոխությունները հաղորդիչի ելքից մինչև ընդունիչի մուտքը։
+                    </p>
+                    <p>
+                        Ազատ տարածության մարումը (FSPL) բնութագրում է ալիքի գնդաձև տարածման հետևանքով առաջացող հզորության կորուստը։
                     </p>
 
                     <div class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-center text-xs space-y-3 shadow-inner overflow-x-auto">
@@ -173,8 +180,10 @@
                         <p><strong class="text-slate-200">Հիմնական բանաձևերի բացատրություն․</strong></p>
                         <ul class="list-disc list-inside space-y-1 pl-2">
                             <li><strong class="text-cyan-400">FSPL</strong> — Ազատ տարածության մարում (dB), որտեղ $d = d_1 + d_2$ (km)</li>
-                            <li><strong class="text-cyan-400">$P_{rx}$</strong> — Ընդունվող հզորություն (dBm)</li>
-                            <li><strong class="text-cyan-400">Link Margin</strong> — Կապի պահուստային գործակից (դրական արժեքն ապահովում է կայունություն)</li>
+                            <li><strong class="text-cyan-400">$P_{tx}, P_{rx}$</strong> — Հաղորդման և ընդունման հզորություններ (dBm)</li>
+                            <li><strong class="text-cyan-400">$G_{tx}, G_{rx}$</strong> — Ալեհավաքների ուղղորդված շահույթներ (dBi)</li>
+                            <li><strong class="text-cyan-400">$L_{losses}$</strong> — Մալուխային և միակցիչային լրացուցիչ կորուստներ (dB)</li>
+                            <li><strong class="text-cyan-400">Link Margin</strong> — Պահուստային գործակից ($\ge 10\text{ dB}$ արժեքն ապահովում է կայունություն մթնոլորտային անհանգստությունների դեպքում)</li>
                         </ul>
                     </div>
                 </div>
@@ -295,3 +304,4 @@
     </script>
 </body>
 </html>
+
