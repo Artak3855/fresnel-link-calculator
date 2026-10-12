@@ -6,6 +6,9 @@
     <title>Radio Link & Fresnel Zone Calculator</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax CDN for Wikipedia-style mathematical formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-4 md:p-8">
     <div class="max-w-6xl mx-auto space-y-8">
@@ -123,37 +126,57 @@
             </div>
         </div>
 
-        <!-- Engineering Theory & Formulas Section for Presentation -->
-        <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700">
-            <h2 class="text-2xl font-bold text-cyan-300 mb-4 border-b border-slate-700 pb-2">📚 Engineering Theory & Formulas (Presentation Guide)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-slate-300 text-sm">
-                <div class="space-y-3 bg-slate-900 p-5 rounded-xl border border-slate-700">
-                    <h3 class="text-lg font-bold text-cyan-400">1. First Fresnel Zone ($R_1$) Calculation</h3>
-                    <p>The first Fresnel zone radius at an obstacle point is calculated using the frequency and distances from both ends ($d_1, d_2$):</p>
-                    <div class="bg-slate-950 p-3 rounded font-mono text-cyan-300 text-center">
-                        $$R_1 = 17.32 \times \sqrt{\frac{d_1 \cdot d_2}{f \cdot (d_1 + d_2)}}$$
+        <!-- Wikipedia-style Detailed Scientific Documentation (Armenian) -->
+        <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6">
+            <h2 class="text-2xl font-bold text-cyan-300 border-b border-slate-700 pb-3">📚 Տեսական հիմնավորումներ և մաթեմատիկական մոդելներ</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 text-sm leading-relaxed">
+                <!-- Section 1: Fresnel Zone -->
+                <div class="space-y-4 bg-slate-900 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">1. Ֆրենելի առաջին գոտու տեսությունը</h3>
+                    <p>
+                        Ռադիոալիքների տարածման ժամանակ ուղղակի տեսանելիության գծի (Line-of-Sight) շուրջ ձևավորվում են էլիպսաձև տարածություններ՝ <strong>Ֆրենելի գոտիներ</strong>։ 
+                    </p>
+                    <p>
+                        Առաջին Ֆրենելի գոտու առավելագույն շառավիղը ($R_1$) խոչընդոտի կետում հաշվարկվում է հետևյալ բանաձևով.
+                    </p>
+                    
+                    <div class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-center text-base shadow-inner overflow-x-auto">
+                        $$R_1 = 17.32 \cdot \sqrt{\frac{d_1 \cdot d_2}{f \cdot (d_1 + d_2)}}$$
                     </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
-                        <li><strong>$R_1$</strong>: Radius in meters (m)</li>
-                        <li><strong>$d_1, d_2$</strong>: Distances in kilometers (km)</li>
-                        <li><strong>$f$</strong>: Frequency in Gigahertz (GHz)</li>
-                        <li><strong>Engineering Rule:</strong> To prevent diffraction loss, at least <strong>60%</strong> of the 1st Fresnel zone must remain unobstructed.</li>
-                    </ul>
+
+                    <div class="space-y-1 text-xs text-slate-400">
+                        <p><strong class="text-slate-200">Նշանակությունները.</strong></p>
+                        <ul class="list-disc list-inside space-y-1 pl-2">
+                            <li><strong class="text-cyan-400">$R_1$</strong> — Ֆրենելի առաջին գոտու շառավիղն է (մետր, m)</li>
+                            <li><strong class="text-cyan-400">$d_1, d_2$</strong> — Հեռավորություններն են կայաններից մինչև խոչընդոտ (կիլոմետր, km)</li>
+                            <li><strong class="text-cyan-400">$f$</strong> — Աշխատանքային հաճախություն (Գիգահերց, GHz)</li>
+                        </ul>
+                        <p class="pt-2 text-amber-400 font-medium">💡 Ինժեներական կանոն․ Դիֆրակցիոն կորուստները բացառելու համար խոչընդոտներից ազատ պետք է լինի առաջին Ֆրենելի գոտու առնվազն 60%-ը ($0.6 \cdot R_1$):</p>
+                    </div>
                 </div>
 
-                <div class="space-y-3 bg-slate-900 p-5 rounded-xl border border-slate-700">
-                    <h3 class="text-lg font-bold text-cyan-400">2. Link Budget & Margin Calculation</h3>
-                    <p>Determines the received signal strength ($P_{rx}$) and compares it against receiver sensitivity:</p>
-                    <div class="bg-slate-950 p-3 rounded font-mono text-cyan-300 text-center">
-                        $$\text{FSPL (dB)} = 20\log_{10}(d) + 20\log_{10}(f) + 92.45$$
-                        $$P_{rx} = P_{tx} + G_{tx} + G_{rx} - \text{FSPL} - L_{losses}$$
-                        $$\text{Link Margin} = P_{rx} - \text{Sensitivity}$$
+                <!-- Section 2: Link Budget -->
+                <div class="space-y-4 bg-slate-900 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">2. Link Budget և FSPL Մոդելներ</h3>
+                    <p>
+                        Link Budget-ը գնահատում է ազդանշանի հաշվեկշիռը հաղորդիչից մինչև ընդունիչ՝ հաշվի առնելով ազատ տարածության մարումը (FSPL):
+                    </p>
+
+                    <div class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-center text-xs space-y-3 shadow-inner overflow-x-auto">
+                        <div>$$\text{FSPL (dB)} = 20\log_{10}(d) + 20\log_{10}(f) + 92.45$$</div>
+                        <div>$$P_{rx} = P_{tx} + G_{tx} + G_{rx} - \text{FSPL} - L_{losses}$$</div>
+                        <div>$$\text{Link Margin} = P_{rx} - \text{Sensitivity}$$</div>
                     </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-400 text-xs">
-                        <li><strong>FSPL</strong>: Free Space Path Loss in dB.</li>
-                        <li><strong>$P_{rx}$ / Sensitivity</strong>: Expressed in dBm.</li>
-                        <li><strong>Link Margin</strong>: Positive margin ensures reliable link stability against fading and weather events.</li>
-                    </ul>
+
+                    <div class="space-y-1 text-xs text-slate-400">
+                        <p><strong class="text-slate-200">Հիմնական բանաձևերի բացատրություն․</strong></p>
+                        <ul class="list-disc list-inside space-y-1 pl-2">
+                            <li><strong class="text-cyan-400">FSPL</strong> — Ազատ տարածության մարում (dB), որտեղ $d = d_1 + d_2$ (km)</li>
+                            <li><strong class="text-cyan-400">$P_{rx}$</strong> — Ընդունվող հզորություն (dBm)</li>
+                            <li><strong class="text-cyan-400">Link Margin</strong> — Կապի պահուստային գործակից (դրական արժեքն ապահովում է կայունություն)</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
