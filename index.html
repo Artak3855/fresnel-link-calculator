@@ -22,7 +22,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Inputs Panel -->
-            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4" id="inputsPanel">
+            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4">
                 <h2 class="text-xl font-bold text-cyan-300 border-b border-slate-700 pb-2">Input Parameters</h2>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -171,7 +171,7 @@
                 </div>
 
                 <!-- Calculation History Card -->
-                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700" id="historyCard">
+                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
                         <h2 class="text-xl font-bold text-cyan-300">📜 Calculation History</h2>
                         <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition">Clear History</button>
@@ -458,6 +458,7 @@
         }
 
         function openPDFTab() {
+            const inputsPanel = document.getElementById('inputsPanel').outerHTML;
             const fresnelCard = document.getElementById('fresnelCard').outerHTML;
             const linkBudgetCard = document.getElementById('linkBudgetCard').outerHTML;
             const theoryCard = document.getElementById('theoryCard').outerHTML;
@@ -472,9 +473,12 @@
                 </head>
                 <body class="bg-slate-900 text-slate-100 p-8 space-y-8">
                     <h1 class="text-3xl font-extrabold text-cyan-400 text-center mb-6">Radio Link & Fresnel Zone Engineering Report</h1>
-                    ${fresnelCard}
-                    ${linkBudgetCard}
-                    ${theoryCard}
+                    <div class="space-y-8 max-w-4xl mx-auto">
+                        ${inputsPanel}
+                        ${fresnelCard}
+                        ${linkBudgetCard}
+                        ${theoryCard}
+                    </div>
                 </body>
                 </html>
             `;
