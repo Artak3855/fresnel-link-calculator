@@ -11,13 +11,6 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- html2canvas for JPG export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        @media print {
-            body * { visibility: hidden; }
-            #printableReport, #printableReport * { visibility: visible; }
-            #printableReport { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
-        }
-    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-4 md:p-8">
     <div class="max-w-6xl mx-auto space-y-8">
@@ -29,7 +22,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Inputs Panel -->
-            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4">
+            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4" id="inputsPanel">
                 <h2 class="text-xl font-bold text-cyan-300 border-b border-slate-700 pb-2">Input Parameters</h2>
 
                 <div class="grid grid-cols-2 gap-2">
@@ -118,9 +111,9 @@
             </div>
 
             <!-- Results & Visualization Panel -->
-            <div class="space-y-6 lg:col-span-2" id="printableReport">
+            <div class="space-y-6 lg:col-span-2">
                 <!-- Fresnel & Obstacle Card -->
-                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700" id="fresnelCard">
                     <h2 class="text-xl font-bold text-cyan-300 mb-4">1st Fresnel Zone & Obstacle</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -145,7 +138,7 @@
                 </div>
 
                 <!-- Link Budget Card -->
-                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700" id="linkBudgetCard">
                     <h2 class="text-xl font-bold text-cyan-300 mb-4">Link Budget & Margin Results</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -168,8 +161,8 @@
 
                     <!-- Export & History Action Buttons -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-700">
-                        <button onclick="exportToPDF()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
-                            📄 Export PDF / Print
+                        <button onclick="openPDFTab()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
+                            📄 Open Report PDF
                         </button>
                         <button onclick="downloadJPG()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
                             📷 Download Instagram JPG (1080x1080)
@@ -178,7 +171,7 @@
                 </div>
 
                 <!-- Calculation History Card -->
-                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700" id="historyCard">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
                         <h2 class="text-xl font-bold text-cyan-300">📜 Calculation History</h2>
                         <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition">Clear History</button>
@@ -191,7 +184,7 @@
         </div>
 
         <!-- Detailed Academic Documentation & Theoretical Foundations -->
-        <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6">
+        <div class="bg-slate-800 p-6 md:p-8 rounded-2xl shadow-xl border border-slate-700 space-y-6" id="theoryCard">
             <h2 class="text-2xl font-bold text-cyan-300 border-b border-slate-700 pb-3">📚 Տեսական հիմնավորումներ և մաթեմատիկական մոդելներ</h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-300 text-sm leading-relaxed">
@@ -251,31 +244,47 @@
         </div>
     </div>
 
-    <!-- Hidden Container for Instagram 1080x1080 JPG Export -->
-    <div id="instaExportCard" style="position: absolute; left: -9999px; top: -9999px; width: 1080px; height: 1080px; background-color: #0f172a; padding: 60px; display: flex; flex-direction: column; justify-content: space-between; font-family: sans-serif; color: #f8fafc;">
+    <!-- Hidden Container for Instagram 1080x1080 JPG Export (Requested exact fields) -->
+    <div id="instaExportCard" style="position: absolute; left: -9999px; top: -9999px; width: 1080px; height: 1080px; background-color: #0f172a; padding: 50px; display: flex; flex-direction: column; justify-content: space-between; font-family: sans-serif; color: #f8fafc;">
         <div>
-            <h1 style="font-size: 42px; font-weight: 800; color: #22d3ee; margin: 0 0 10px 0;">Radio Link & Fresnel Summary</h1>
-            <p style="font-size: 20px; color: #94a3b8; margin: 0;">Professional RF Engineering Report</p>
+            <h1 style="font-size: 38px; font-weight: 800; color: #22d3ee; margin: 0 0 8px 0;">Radio Link & Fresnel Summary</h1>
+            <p style="font-size: 18px; color: #94a3b8; margin: 0;">Professional RF Engineering Report</p>
         </div>
-        <div style="background-color: #1e293b; padding: 40px; border-radius: 24px; border: 2px solid #334155; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-            <div>
-                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Max Fresnel Radius (R1)</span>
-                <span id="insta_r1" style="font-size: 38px; font-weight: 800; color: #22d3ee;">0.00 m</span>
+
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <div style="flex: 1; background-color: #1e293b; padding: 25px; border-radius: 20px; border: 2px solid #334155;">
+                <h3 style="color: #22d3ee; font-size: 20px; margin-top: 0; margin-bottom: 15px;">Input Parameters</h3>
+                <div style="font-size: 15px; color: #cbd5e1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>Frequency: <strong id="ins_freq" style="color:white;">-</strong></div>
+                    <div>d₁ / d₂: <strong id="ins_dist" style="color:white;">-</strong></div>
+                    <div>TX Power: <strong id="ins_ptx" style="color:white;">-</strong></div>
+                    <div>Ant. Gain (TX/RX): <strong id="ins_gain" style="color:white;">-</strong></div>
+                </div>
             </div>
-            <div>
-                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Link Margin</span>
-                <span id="insta_margin" style="font-size: 38px; font-weight: 800; color: #4ade80;">0.00 dB</span>
-            </div>
-            <div>
-                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Received Power (Prx)</span>
-                <span id="insta_prx" style="font-size: 32px; font-weight: 800; color: #22d3ee;">0.00 dBm</span>
-            </div>
-            <div>
-                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Free Space Path Loss</span>
-                <span id="insta_fspl" style="font-size: 32px; font-weight: 800; color: #22d3ee;">0.00 dB</span>
+            <div style="background-color: #1e293b; padding: 15px; border-radius: 20px; border: 2px solid #334155; text-align: center;">
+                <canvas id="instaCanvas" width="400" height="150" style="display:block; margin: 0 auto;"></canvas>
             </div>
         </div>
-        <div style="text-align: center; color: #64748b; font-size: 18px; border-top: 1px solid #334155; pt: 20px;">
+
+        <div style="background-color: #1e293b; padding: 30px; border-radius: 20px; border: 2px solid #334155;">
+            <h3 style="color: #22d3ee; font-size: 20px; margin-top: 0; margin-bottom: 15px;">Link Budget & Results</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div>
+                    <span style="font-size: 14px; color: #94a3b8; display: block; margin-bottom: 5px;">Free Space Path Loss (FSPL)</span>
+                    <span id="insta_fspl" style="font-size: 26px; font-weight: 800; color: #22d3ee;">0.00 dB</span>
+                </div>
+                <div>
+                    <span style="font-size: 14px; color: #94a3b8; display: block; margin-bottom: 5px;">Received Power (Prx)</span>
+                    <span id="insta_prx" style="font-size: 26px; font-weight: 800; color: #22d3ee;">0.00 dBm</span>
+                </div>
+                <div>
+                    <span style="font-size: 14px; color: #94a3b8; display: block; margin-bottom: 5px;">Link Margin</span>
+                    <span id="insta_margin" style="font-size: 26px; font-weight: 800; color: #4ade80;">0.00 dB</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; color: #64748b; font-size: 16px; border-top: 1px solid #334155; padding-top: 10px;">
             Generated via Fresnel Link Calculator
         </div>
     </div>
@@ -353,13 +362,18 @@
                 marginBox.className = 'p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-red-400';
             }
 
-            // Update hidden Instagram card values
-            document.getElementById('insta_r1').innerText = r1.toFixed(2) + ' m';
-            document.getElementById('insta_margin').innerText = marginStr;
-            document.getElementById('insta_prx').innerText = prx.toFixed(2) + ' dBm';
-            document.getElementById('insta_fspl').innerText = fspl.toFixed(2) + ' dB';
+            // Update Instagram card values
+            document.getElementById('ins_freq').innerText = rawFreq + ' ' + freqUnit;
+            document.getElementById('ins_dist').innerText = d1 + ' / ' + d2 + ' km';
+            document.getElementById('ins_ptx').innerText = ptx + ' dBm';
+            document.getElementById('ins_gain').innerText = gtx + ' / ' + grx + ' dBi';
 
-            drawFresnel(d1, d2, r1, h_obs);
+            document.getElementById('insta_fspl').innerText = fspl.toFixed(2) + ' dB';
+            document.getElementById('insta_prx').innerText = prx.toFixed(2) + ' dBm';
+            document.getElementById('insta_margin').innerText = marginStr;
+
+            drawCanvas('fresnelCanvas', d1, d2, r1, h_obs);
+            drawCanvas('instaCanvas', d1, d2, r1, h_obs);
 
             // Add to History
             addHistoryRecord({
@@ -402,7 +416,7 @@
                 return;
             }
             list.innerHTML = '';
-            calculationHistory.forEach((item, index) => {
+            calculationHistory.forEach((item) => {
                 let div = document.createElement('div');
                 div.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center hover:border-cyan-500 cursor-pointer transition';
                 div.innerHTML = `
@@ -443,8 +457,30 @@
             renderHistory();
         }
 
-        function exportToPDF() {
-            window.print();
+        function openPDFTab() {
+            const fresnelCard = document.getElementById('fresnelCard').outerHTML;
+            const linkBudgetCard = document.getElementById('linkBudgetCard').outerHTML;
+            const theoryCard = document.getElementById('theoryCard').outerHTML;
+
+            const pdfContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Radio Link Report - PDF View</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                </head>
+                <body class="bg-slate-900 text-slate-100 p-8 space-y-8">
+                    <h1 class="text-3xl font-extrabold text-cyan-400 text-center mb-6">Radio Link & Fresnel Zone Engineering Report</h1>
+                    ${fresnelCard}
+                    ${linkBudgetCard}
+                    ${theoryCard}
+                </body>
+                </html>
+            `;
+            const blob = new Blob([pdfContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
         }
 
         function downloadJPG() {
@@ -457,18 +493,19 @@
             });
         }
 
-        function drawFresnel(d1, d2, r1, h_obs) {
-            const canvas = document.getElementById('fresnelCanvas');
+        function drawCanvas(canvasId, d1, d2, r1, h_obs) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             const width = canvas.width;
             const height = canvas.height;
 
             ctx.clearRect(0, 0, width, height);
 
-            let startX = 50;
-            let endX = width - 50;
+            let startX = 40;
+            let endX = width - 40;
             let centerY = height / 2;
-            let maxRadiusPx = 70;
+            let maxRadiusPx = height * 0.35;
 
             ctx.beginPath();
             ctx.strokeStyle = '#94a3b8';
@@ -481,7 +518,6 @@
             ctx.beginPath();
             ctx.strokeStyle = '#06b6d4';
             ctx.lineWidth = 2;
-            let controlX = startX + (endX - startX) * (d1 / (d1 + d2));
             ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx, 0, 0, 2 * Math.PI);
             ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
             ctx.fill();
@@ -492,24 +528,24 @@
             ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx * 0.6, 0, 0, 2 * Math.PI);
             ctx.stroke();
 
-            let obsX = controlX;
-            let obsHeightPx = Math.min((h_obs / r1) * maxRadiusPx, maxRadiusPx + 15);
+            let controlX = startX + (endX - startX) * (d1 / (d1 + d2));
+            let obsHeightPx = Math.min((h_obs / r1) * maxRadiusPx, maxRadiusPx + 10);
 
             ctx.beginPath();
             ctx.strokeStyle = h_obs <= (0.6 * r1) ? '#22c55e' : (h_obs <= r1 ? '#f59e0b' : '#ef4444');
             ctx.lineWidth = 4;
-            ctx.moveTo(obsX, centerY);
-            ctx.lineTo(obsX, centerY - obsHeightPx);
+            ctx.moveTo(controlX, centerY);
+            ctx.lineTo(controlX, centerY - obsHeightPx);
             ctx.stroke();
 
             ctx.fillStyle = '#f8fafc';
-            ctx.fillRect(startX - 4, centerY - 25, 8, 25);
-            ctx.fillRect(endX - 4, centerY - 25, 8, 25);
+            ctx.fillRect(startX - 3, centerY - 20, 6, 20);
+            ctx.fillRect(endX - 3, centerY - 20, 6, 20);
 
             ctx.fillStyle = '#94a3b8';
-            ctx.font = '12px sans-serif';
-            ctx.fillText('Tx', startX - 8, centerY + 15);
-            ctx.fillText('Rx', endX - 8, centerY + 15);
+            ctx.font = '11px sans-serif';
+            ctx.fillText('Tx', startX - 6, centerY + 15);
+            ctx.fillText('Rx', endX - 6, centerY + 15);
         }
 
         window.onload = calculateAll;
