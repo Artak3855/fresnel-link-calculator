@@ -9,9 +9,11 @@
     <!-- MathJax CDN for Wikipedia-style mathematical formulas -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- html2canvas for JPG export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-4 md:p-8">
-    <div class="max-w-6xl mx-auto space-y-8">
+    <div class="max-w-6xl mx-auto space-y-8" id="exportArea">
         <!-- Header -->
         <header class="text-center">
             <h1 class="text-3xl md:text-4xl font-extrabold text-cyan-400 mb-2">Radio Link (Link Budget) & Fresnel Zone Calculator</h1>
@@ -148,8 +150,29 @@
                             <span id="res_margin" class="text-2xl font-extrabold text-green-400">0.00 dB</span>
                         </div>
                     </div>
-                    <div id="margin_status_box" class="p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300">
+                    <div id="margin_status_box" class="p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300 mb-4">
                         -
+                    </div>
+
+                    <!-- Export & History Action Buttons -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-700">
+                        <button onclick="exportToPDF()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
+                            📄 Export PDF / Print
+                        </button>
+                        <button onclick="downloadJPG()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
+                            📷 Download JPG
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Calculation History Card -->
+                <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                        <h2 class="text-xl font-bold text-cyan-300">📜 Calculation History</h2>
+                        <button onclick="clearHistory()" class="text-xs text-slate-400 hover:text-red-400 transition">Clear History</button>
+                    </div>
+                    <div id="historyList" class="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs">
+                        <p class="text-slate-500 italic">No calculations in history yet. Click 'Calculate' to record.</p>
                     </div>
                 </div>
             </div>
@@ -218,11 +241,11 @@
 
     <!-- JavaScript Logic -->
     <script>
+        let calculationHistory = [];
+
         function calculateAll() {
             let rawFreq = parseFloat(document.getElementById('freq').value);
             const freqUnit = document.getElementById('freq_unit').value;
-            
-            // Convert to GHz for internal calculations if input is in MHz
             let f = freqUnit === 'MHz' ? rawFreq / 1000 : rawFreq;
 
             const d1 = parseFloat(document.getElementById('d1').value);
@@ -248,14 +271,18 @@
             document.getElementById('res_60').innerText = threshold60.toFixed(2) + ' m';
 
             let obsStatusElem = document.getElementById('res_obs_status');
+            let obsText = '';
             if (h_obs <= threshold60) {
-                obsStatusElem.innerText = 'Safe (Link is clear)';
+                obsText = 'Safe (Link is clear)';
+                obsStatusElem.innerText = obsText;
                 obsStatusElem.className = 'text-lg font-extrabold text-green-400';
             } else if (h_obs <= r1) {
-                obsStatusElem.innerText = 'Warning (Within 60%)';
+                obsText = 'Warning (Within 60%)';
+                obsStatusElem.innerText = obsText;
                 obsStatusElem.className = 'text-lg font-extrabold text-amber-400';
             } else {
-                obsStatusElem.innerText = 'Danger (Obstructing link)';
+                obsText = 'Danger (Obstructing link)';
+                obsStatusElem.innerText = obsText;
                 obsStatusElem.className = 'text-lg font-extrabold text-red-400';
             }
 
@@ -267,7 +294,8 @@
             document.getElementById('res_prx').innerText = prx.toFixed(2) + ' dBm';
             
             let marginElem = document.getElementById('res_margin');
-            marginElem.innerText = (linkMargin >= 0 ? '+' : '') + linkMargin.toFixed(2) + ' dB';
+            let marginStr = (linkMargin >= 0 ? '+' : '') + linkMargin.toFixed(2) + ' dB';
+            marginElem.innerText = marginStr;
             
             let marginBox = document.getElementById('margin_status_box');
             if (linkMargin >= req_margin) {
@@ -285,6 +313,84 @@
             }
 
             drawFresnel(d1, d2, r1, h_obs);
+
+            // Add to History
+            addHistoryRecord({
+                time: new Date().toLocaleTimeString(),
+                freq: rawFreq + ' ' + freqUnit,
+                dist: totalD.toFixed(1) + ' km',
+                margin: marginStr,
+                prx: prx.toFixed(2) + ' dBm',
+                params: { rawFreq, freqUnit, d1, d2, h_obs, ptx, gtx, grx, tx_loss, rx_loss, other_losses, req_margin, sensitivity }
+            });
+        }
+
+        function addHistoryRecord(record) {
+            calculationHistory.unshift(record);
+            if (calculationHistory.length > 10) calculationHistory.pop();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if (calculationHistory.length === 0) {
+                list.innerHTML = `<p class="text-slate-500 italic">No calculations in history yet. Click 'Calculate' to record.</p>`;
+                return;
+            }
+            list.innerHTML = '';
+            calculationHistory.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center hover:border-cyan-500 cursor-pointer transition';
+                div.innerHTML = `
+                    <div>
+                        <span class="text-cyan-400 font-semibold">[${item.time}]</span> 
+                        Freq: <span class="text-white">${item.freq}</span>, 
+                        Dist: <span class="text-white">${item.dist}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-green-400 font-bold">${item.margin}</span> 
+                        <span class="text-slate-400">(${item.prx})</span>
+                    </div>
+                `;
+                div.onclick = () => loadHistoryItem(item.params);
+                list.appendChild(div);
+            });
+        }
+
+        function loadHistoryItem(p) {
+            document.getElementById('freq').value = p.rawFreq;
+            document.getElementById('freq_unit').value = p.freqUnit;
+            document.getElementById('d1').value = p.d1;
+            document.getElementById('d2').value = p.d2;
+            document.getElementById('h_obs').value = p.h_obs;
+            document.getElementById('ptx').value = p.ptx;
+            document.getElementById('gtx').value = p.gtx;
+            document.getElementById('grx').value = p.grx;
+            document.getElementById('tx_loss').value = p.tx_loss;
+            document.getElementById('rx_loss').value = p.rx_loss;
+            document.getElementById('other_losses').value = p.other_losses;
+            document.getElementById('req_margin').value = p.req_margin;
+            document.getElementById('sensitivity').value = p.sensitivity;
+            calculateAll();
+        }
+
+        function clearHistory() {
+            calculationHistory = [];
+            renderHistory();
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function downloadJPG() {
+            const element = document.getElementById('exportArea');
+            html2canvas(element, { backgroundColor: '#0f172a', scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'fresnel-link-report.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+            });
         }
 
         function drawFresnel(d1, d2, r1, h_obs) {
