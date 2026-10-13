@@ -23,48 +23,74 @@
             <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4">
                 <h2 class="text-xl font-bold text-cyan-300 border-b border-slate-700 pb-2">Input Parameters</h2>
 
-                <div>
-                    <label class="block text-sm font-medium mb-1">Frequency ($f$, GHz)</label>
-                    <input type="number" id="freq" value="5.8" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Frequency</label>
+                        <input type="number" id="freq" value="5.8" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Unit</label>
+                        <select id="freq_unit" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" onchange="calculateAll()">
+                            <option value="GHz" selected>GHz</option>
+                            <option value="MHz">MHz</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-sm font-medium mb-1">Distance $d_1$ (km)</label>
+                        <label class="block text-sm font-medium mb-1">Distance d<sub>1</sub> (km)</label>
                         <input type="number" id="d1" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Distance $d_2$ (km)</label>
+                        <label class="block text-sm font-medium mb-1">Distance d<sub>2</sub> (km)</label>
                         <input type="number" id="d2" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Obstacle Height ($h_{obs}$, m)</label>
+                    <label class="block text-sm font-medium mb-1">Obstacle Height (h<sub>obs</sub>, m)</label>
                     <input type="number" id="h_obs" value="3" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                 </div>
 
                 <hr class="border-slate-700 my-2">
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Tx Power ($P_{tx}$, dBm)</label>
+                    <label class="block text-sm font-medium mb-1">TX Power (P<sub>tx</sub>, dBm)</label>
                     <input type="number" id="ptx" value="20" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-sm font-medium mb-1">Tx Antenna Gain ($G_{tx}$, dBi)</label>
+                        <label class="block text-sm font-medium mb-1">TX Antenna Gain (G<sub>tx</sub>, dBi)</label>
                         <input type="number" id="gtx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Rx Antenna Gain ($G_{rx}$, dBi)</label>
+                        <label class="block text-sm font-medium mb-1">RX Antenna Gain (G<sub>rx</sub>, dBi)</label>
                         <input type="number" id="grx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium mb-1">Cable/Other Losses ($L_{loss}$, dB)</label>
-                    <input type="number" id="losses" value="2" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">TX Cable Loss (dB)</label>
+                        <input type="number" id="tx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">RX Cable Loss (dB)</label>
+                        <input type="number" id="rx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Other Losses (dB)</label>
+                        <input type="number" id="other_losses" value="0" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Required Margin (dB)</label>
+                        <input type="number" id="req_margin" value="10" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    </div>
                 </div>
 
                 <div>
@@ -85,7 +111,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="text-xs text-slate-400 block">Max Fresnel Radius ($R_1$)</span>
+                            <span class="text-xs text-slate-400 block">Max Fresnel Radius (R<sub>1</sub>)</span>
                             <span id="res_r1" class="text-2xl font-extrabold text-cyan-400">0.00 m</span>
                         </div>
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
@@ -108,19 +134,22 @@
                 <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
                     <h2 class="text-xl font-bold text-cyan-300 mb-4">Link Budget & Margin Results</h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
                             <span class="text-xs text-slate-400 block">Free Space Path Loss (FSPL)</span>
                             <span id="res_fspl" class="text-xl font-extrabold text-cyan-400">0.00 dB</span>
                         </div>
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                            <span class="text-xs text-slate-400 block">Received Power ($P_{rx}$)</span>
+                            <span class="text-xs text-slate-400 block">Received Power (P<sub>rx</sub>)</span>
                             <span id="res_prx" class="text-xl font-extrabold text-cyan-400">0.00 dBm</span>
                         </div>
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
                             <span class="text-xs text-slate-400 block">Link Margin</span>
                             <span id="res_margin" class="text-2xl font-extrabold text-green-400">0.00 dB</span>
                         </div>
+                    </div>
+                    <div id="margin_status_box" class="p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-300">
+                        -
                     </div>
                 </div>
             </div>
@@ -138,7 +167,7 @@
                         Ռադիոալիքների տարածման ժամանակ ուղղակի տեսանելիության գծի (Line-of-Sight) շուրջ ձևավորվում են էլիպսաձև տարածություններ՝ հայտնի որպես <strong>Ֆրենելի գոտիներ</strong>։ Համաձայն Հյույգենս-Ֆրենելի սկզբունքի՝ ալիքային ճակատի յուրաքանչյուր կետ հանդիսանում է երկրորդային ալիքների աղբյուր։
                     </p>
                     <p>
-                        Առաջին Ֆրենելի գոտու ($F_1$) ներսում տարածվող ալիքները ընդունիչին են հասնում համաչափ փուլով՝ նպաստելով կառուցողական ինտերֆերենցիային։ Եթե տեղանքի խոչընդոտները մտնում են այս գոտի, առաջանում է սուր եզրային դիֆրակցիա (knife-edge diffraction), որը կտրուկ թուլացնում է ազդանշանը։
+                        Առաջին Ֆրենելի գոտու ներսում տարածվող ալիքները ընդունիչին են հասնում փուլային համաչափությամբ։ Եթե տեղանքի խոչընդոտները մտնում են այս գոտի, առաջանում է եզրային դիֆրակցիա, որը թուլացնում է ազդանշանը։
                     </p>
                     <p>
                         Առավելագույն շառավիղը ($R_1$) խոչընդոտի կետում հաշվարկվում է հետևյալ բանաձևով.
@@ -151,12 +180,11 @@
                     <div class="space-y-1 text-xs text-slate-400">
                         <p><strong class="text-slate-200">Մաթեմատիկական փոփոխականներ․</strong></p>
                         <ul class="list-disc list-inside space-y-1 pl-2">
-                            <li><strong class="text-cyan-400">$R_1$</strong> — Ֆրենելի առաջին գոտու շառավիղն է (մետր, m)</li>
-                            <li><strong class="text-cyan-400">$d_1$</strong> — Հեռավորությունն է հաղորդիչից մինչև խոչընդոտի կետը (կիլոմետր, km)</li>
-                            <li><strong class="text-cyan-400">$d_2$</strong> — Հեռավորությունն է խոչընդոտից մինչև ընդունիչ (կիլոմետր, km)</li>
-                            <li><strong class="text-cyan-400">$f$</strong> — Աշխատանքային հաճախություն (Գիգահերց, GHz)</li>
+                            <li><strong class="text-cyan-400">R<sub>1</sub></strong> — Ֆրենելի առաջին գոտու շառավիղն է (մետր, m)</li>
+                            <li><strong class="text-cyan-400">d<sub>1</sub>, d<sub>2</sub></strong> — Հեռավորություններն են հաղորդիչից և ընդունիչից մինչև խոչընդոտ (կիլոմետր, km)</li>
+                            <li><strong class="text-cyan-400">f</strong> — Աշխատանքային հաճախություն (GHz կամ MHz)</li>
                         </ul>
-                        <p class="pt-2 text-amber-400 font-medium">💡 Ինժեներական կանոն․ Դիֆրակցիոն կորուստները բացառելու և ազատ տարածության պայմաններին մոտարկելու համար խոչընդոտներից ազատ պետք է լինի առաջին Ֆրենելի գոտու առնվազն 60%-ը ($h_{obs} \le 0.6 \cdot R_1$):</p>
+                        <p class="pt-2 text-amber-400 font-medium">💡 Ինժեներական կանոն․ Դիֆրակցիոն կորուստները բացառելու համար խոչընդոտներից ազատ պետք է լինի առաջին Ֆրենելի գոտու առնվազն 60%-ը ($0.6 \cdot R_1$):</p>
                     </div>
                 </div>
 
@@ -164,15 +192,12 @@
                 <div class="space-y-4 bg-slate-900 p-6 rounded-xl border border-slate-700">
                     <h3 class="text-lg font-bold text-cyan-400 border-b border-slate-800 pb-2">2. Link Budget և FSPL Մոդելների վերլուծություն</h3>
                     <p>
-                        Link Budget-ը ռադիոհղման էներգետիկ հաշվեկշիռն է, որը գնահատում է ազդանշանի հզորության փոփոխությունները հաղորդիչի ելքից մինչև ընդունիչի մուտքը։
-                    </p>
-                    <p>
-                        Ազատ տարածության մարումը (FSPL) բնութագրում է ալիքի գնդաձև տարածման հետևանքով առաջացող հզորության կորուստը։
+                        Link Budget-ը գնահատում է ազդանշանի հզորության հաշվեկշիռը հաղորդիչի ելքից մինչև ընդունիչի մուտքը՝ հաշվի առնելով բոլոր ձեռքբերումներն ու կորուստները։
                     </p>
 
                     <div class="bg-slate-950 p-4 rounded-lg text-cyan-300 text-center text-xs space-y-3 shadow-inner overflow-x-auto">
                         <div>$$\text{FSPL (dB)} = 20\log_{10}(d) + 20\log_{10}(f) + 92.45$$</div>
-                        <div>$$P_{rx} = P_{tx} + G_{tx} + G_{rx} - \text{FSPL} - L_{losses}$$</div>
+                        <div>$$P_{rx} = P_{tx} + G_{tx} + G_{rx} - \text{FSPL} - (L_{tx} + L_{rx} + L_{other})$$</div>
                         <div>$$\text{Link Margin} = P_{rx} - \text{Sensitivity}$$</div>
                     </div>
 
@@ -180,10 +205,10 @@
                         <p><strong class="text-slate-200">Հիմնական բանաձևերի բացատրություն․</strong></p>
                         <ul class="list-disc list-inside space-y-1 pl-2">
                             <li><strong class="text-cyan-400">FSPL</strong> — Ազատ տարածության մարում (dB), որտեղ $d = d_1 + d_2$ (km)</li>
-                            <li><strong class="text-cyan-400">$P_{tx}, P_{rx}$</strong> — Հաղորդման և ընդունման հզորություններ (dBm)</li>
-                            <li><strong class="text-cyan-400">$G_{tx}, G_{rx}$</strong> — Ալեհավաքների ուղղորդված շահույթներ (dBi)</li>
-                            <li><strong class="text-cyan-400">$L_{losses}$</strong> — Մալուխային և միակցիչային լրացուցիչ կորուստներ (dB)</li>
-                            <li><strong class="text-cyan-400">Link Margin</strong> — Պահուստային գործակից ($\ge 10\text{ dB}$ արժեքն ապահովում է կայունություն մթնոլորտային անհանգստությունների դեպքում)</li>
+                            <li><strong class="text-cyan-400">P<sub>tx</sub>, P<sub>rx</sub></strong> — Հաղորդման և ընդունման հզորություններ (dBm)</li>
+                            <li><strong class="text-cyan-400">G<sub>tx</sub>, G<sub>rx</sub></strong> — Ալեհավաքների շահույթներ (dBi)</li>
+                            <li><strong class="text-cyan-400">L<sub>tx</sub>, L<sub>rx</sub></strong> — Մալուխային կորուստներ (dB)</li>
+                            <li><strong class="text-cyan-400">Link Margin</strong> — Պահուստային գործակից (համեմատվում է օգտատիրոջ կողմից սահմանված Required Margin-ի հետ)</li>
                         </ul>
                     </div>
                 </div>
@@ -194,7 +219,12 @@
     <!-- JavaScript Logic -->
     <script>
         function calculateAll() {
-            const f = parseFloat(document.getElementById('freq').value);
+            let rawFreq = parseFloat(document.getElementById('freq').value);
+            const freqUnit = document.getElementById('freq_unit').value;
+            
+            // Convert to GHz for internal calculations if input is in MHz
+            let f = freqUnit === 'MHz' ? rawFreq / 1000 : rawFreq;
+
             const d1 = parseFloat(document.getElementById('d1').value);
             const d2 = parseFloat(document.getElementById('d2').value);
             const h_obs = parseFloat(document.getElementById('h_obs').value);
@@ -202,10 +232,14 @@
             const ptx = parseFloat(document.getElementById('ptx').value);
             const gtx = parseFloat(document.getElementById('gtx').value);
             const grx = parseFloat(document.getElementById('grx').value);
-            const losses = parseFloat(document.getElementById('losses').value);
+            const tx_loss = parseFloat(document.getElementById('tx_loss').value);
+            const rx_loss = parseFloat(document.getElementById('rx_loss').value);
+            const other_losses = parseFloat(document.getElementById('other_losses').value);
+            const req_margin = parseFloat(document.getElementById('req_margin').value);
             const sensitivity = parseFloat(document.getElementById('sensitivity').value);
 
             const totalD = d1 + d2;
+            const totalLosses = tx_loss + rx_loss + other_losses;
 
             let r1 = 17.32 * Math.sqrt((d1 * d2) / (f * totalD));
             let threshold60 = 0.6 * r1;
@@ -226,20 +260,28 @@
             }
 
             let fspl = 20 * Math.log10(totalD) + 20 * Math.log10(f) + 92.45;
-            let prx = ptx + gtx + grx - fspl - losses;
+            let prx = ptx + gtx + grx - fspl - totalLosses;
             let linkMargin = prx - sensitivity;
 
             document.getElementById('res_fspl').innerText = fspl.toFixed(2) + ' dB';
             document.getElementById('res_prx').innerText = prx.toFixed(2) + ' dBm';
             
             let marginElem = document.getElementById('res_margin');
-            marginElem.innerText = linkMargin.toFixed(2) + ' dB';
-            if (linkMargin >= 10) {
+            marginElem.innerText = (linkMargin >= 0 ? '+' : '') + linkMargin.toFixed(2) + ' dB';
+            
+            let marginBox = document.getElementById('margin_status_box');
+            if (linkMargin >= req_margin) {
                 marginElem.className = 'text-2xl font-extrabold text-green-400';
+                marginBox.innerHTML = `Required margin met &bull; ${(linkMargin - req_margin).toFixed(2)} dB reserve above your ${req_margin.toFixed(1)} dB target.`;
+                marginBox.className = 'p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-green-400';
             } else if (linkMargin >= 0) {
                 marginElem.className = 'text-2xl font-extrabold text-amber-400';
+                marginBox.innerHTML = `Warning &bull; Margin is positive but below your target of ${req_margin.toFixed(1)} dB.`;
+                marginBox.className = 'p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-amber-400';
             } else {
                 marginElem.className = 'text-2xl font-extrabold text-red-400';
+                marginBox.innerHTML = `Critical &bull; Link margin is negative. Link will not operate reliably.`;
+                marginBox.className = 'p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-red-400';
             }
 
             drawFresnel(d1, d2, r1, h_obs);
@@ -304,4 +346,3 @@
     </script>
 </body>
 </html>
-
