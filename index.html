@@ -305,7 +305,7 @@
     <!-- JavaScript Logic -->
     <script>
         let calculationHistory = [];
-        let currentParams = { d1: 5, d2: 5, r1: 11.37, h_obs: 3, sliderPct: 50 };
+        let reportData = {};
         let isUpdatingSlider = false;
 
         function onSliderMove() {
@@ -316,7 +316,6 @@
             let d1Field = document.getElementById('d1');
             let d2Field = document.getElementById('d2');
             
-            // Assume total distance is fixed based on current d1 + d2 sum
             let totalD = parseFloat(d1Field.value) + parseFloat(d2Field.value);
             if (isNaN(totalD) || totalD <= 0) totalD = 10;
 
@@ -370,7 +369,29 @@
             let threshold60 = 0.6 * r1;
             let sliderPct = parseFloat(document.getElementById('pathSlider').value);
 
-            currentParams = { d1, d2, r1, h_obs, sliderPct };
+            // Save constant snapshot for report
+            reportData = {
+                freq: rawFreq + ' ' + freqUnit,
+                d1: d1.toFixed(2) + ' km',
+                d2: d2.toFixed(2) + ' km',
+                totalD: totalD.toFixed(2) + ' km',
+                h_obs: h_obs + ' m',
+                ptx: ptx + ' dBm',
+                gtx: gtx + ' dBi',
+                grx: grx + ' dBi',
+                tx_loss: tx_loss + ' dB',
+                rx_loss: rx_loss + ' dB',
+                other_losses: other_losses + ' dB',
+                req_margin: req_margin + ' dB',
+                sensitivity: sensitivity + ' dBm',
+                r1: r1.toFixed(2) + ' m',
+                threshold60: threshold60.toFixed(2) + ' m',
+                obsStatus: h_obs <= threshold60 ? 'Safe (Link is clear)' : (h_obs <= r1 ? 'Warning (Within 60%)' : 'Danger (Obstructing link)'),
+                fspl: fspl = (20 * Math.log10(totalD) + 20 * Math.log10(f) + 92.45).toFixed(2) + ' dB',
+                prx: (prx = ptx + gtx + grx - (20 * Math.log10(totalD) + 20 * Math.log10(f) + 92.45) - totalLosses).toFixed(2) + ' dBm',
+                margin: ((prx - sensitivity) >= 0 ? '+' : '') + (prx - sensitivity).toFixed(2) + ' dB',
+                sliderPct: sliderPct
+            };
 
             document.getElementById('res_r1').innerText = r1.toFixed(2) + ' m';
             document.getElementById('res_60').innerText = threshold60.toFixed(2) + ' m';
@@ -392,12 +413,12 @@
                 obsStatusElem.className = 'text-lg font-extrabold text-red-400';
             }
 
-            let fspl = 20 * Math.log10(totalD) + 20 * Math.log10(f) + 92.45;
-            let prx = ptx + gtx + grx - fspl - totalLosses;
-            let linkMargin = prx - sensitivity;
+            let fsplVal = 20 * Math.log10(totalD) + 20 * Math.log10(f) + 92.45;
+            let prxVal = ptx + gtx + grx - fsplVal - totalLosses;
+            let linkMargin = prxVal - sensitivity;
 
-            document.getElementById('res_fspl').innerText = fspl.toFixed(2) + ' dB';
-            document.getElementById('res_prx').innerText = prx.toFixed(2) + ' dBm';
+            document.getElementById('res_fspl').innerText = fsplVal.toFixed(2) + ' dB';
+            document.getElementById('res_prx').innerText = prxVal.toFixed(2) + ' dBm';
             
             let marginElem = document.getElementById('res_margin');
             let marginStr = (linkMargin >= 0 ? '+' : '') + linkMargin.toFixed(2) + ' dB';
@@ -424,8 +445,8 @@
             document.getElementById('ins_ptx').innerText = ptx + ' dBm';
             document.getElementById('ins_gain').innerText = gtx + ' / ' + grx + ' dBi';
 
-            document.getElementById('insta_fspl').innerText = fspl.toFixed(2) + ' dB';
-            document.getElementById('insta_prx').innerText = prx.toFixed(2) + ' dBm';
+            document.getElementById('insta_fspl').innerText = fsplVal.toFixed(2) + ' dB';
+            document.getElementById('insta_prx').innerText = prxVal.toFixed(2) + ' dBm';
             document.getElementById('insta_margin').innerText = marginStr;
 
             drawCanvas('fresnelCanvas', d1, d2, r1, h_obs, sliderPct);
@@ -437,7 +458,7 @@
                 freq: rawFreq + ' ' + freqUnit,
                 dist: totalD.toFixed(1) + ' km',
                 margin: marginStr,
-                prx: prx.toFixed(2) + ' dBm',
+                prx: prxVal.toFixed(2) + ' dBm',
                 params: { rawFreq, freqUnit, d1, d2, h_obs, ptx, gtx, grx, tx_loss, rx_loss, other_losses, req_margin, sensitivity, sliderPct }
             });
         }
@@ -518,87 +539,134 @@
         }
 
         function openPDFTab() {
-            const inputsPanel = document.getElementById('inputsPanel').outerHTML;
-            const fresnelCard = document.getElementById('fresnelCard').outerHTML;
-            const linkBudgetCard = document.getElementById('linkBudgetCard').outerHTML;
-            const theoryCard = document.getElementById('theoryCard').outerHTML;
-
             const htmlContent = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Radio Link Report - PDF View</title>
-                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <title>Radio Link Report - Black & White Print View</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 30px; }
+                        h1 { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+                        h2 { font-size: 16px; font-weight: bold; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #000; padding-bottom: 5px; text-transform: uppercase; }
+                        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+                        .card { border: 1px solid #000; padding: 12px; border-radius: 4px; background: #fff; }
+                        .label { font-size: 11px; color: #555; display: block; margin-bottom: 3px; text-transform: uppercase; }
+                        .val { font-size: 14px; font-weight: bold; }
+                        canvas { display: block; margin: 20px auto; border: 1px solid #000; background: #fff; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+                        th, td { border: 1px solid #000; padding: 6px 10px; text-align: left; }
+                        th { background: #eee; }
+                    </style>
                 </head>
-                <body class="bg-slate-900 text-slate-100 p-8 space-y-8">
-                    <h1 class="text-3xl font-extrabold text-cyan-400 text-center mb-6">Radio Link & Fresnel Zone Engineering Report</h1>
-                    <div class="space-y-8 max-w-4xl mx-auto">
-                        ${inputsPanel}
-                        ${fresnelCard}
-                        ${linkBudgetCard}
-                        ${theoryCard}
+                <body>
+                    <h1>Radio Link & Fresnel Zone Engineering Report</h1>
+
+                    <h2>1. Input Parameters (Constant Snapshot)</h2>
+                    <table>
+                        <tr><th>Parameter</th><th>Value</th><th>Parameter</th><th>Value</th></tr>
+                        <tr><td>Frequency</td><td><b>${reportData.freq}</b></td><td>Distance d₁</td><td><b>${reportData.d1}</b></td></tr>
+                        <tr><td>Distance d₂</td><td><b>${reportData.d2}</b></td><td>Total Link Distance</td><td><b>${reportData.totalD}</b></td></tr>
+                        <tr><td>Obstacle Height (h<sub>obs</sub>)</td><td><b>${reportData.h_obs}</b></td><td>TX Power (P<sub>tx</sub>)</td><td><b>${reportData.ptx}</b></td></tr>
+                        <tr><td>TX Antenna Gain</td><td><b>${reportData.gtx}</b></td><td>RX Antenna Gain</td><td><b>${reportData.grx}</b></td></tr>
+                        <tr><td>TX Cable Loss</td><td><b>${reportData.tx_loss}</b></td><td>RX Cable Loss</td><td><b>${reportData.rx_loss}</b></td></tr>
+                        <tr><td>Other Losses</td><td><b>${reportData.other_losses}</b></td><td>Required Margin</td><td><b>${reportData.req_margin}</b></td></tr>
+                        <tr><td>Receiver Sensitivity</td><td><b>${reportData.sensitivity}</b></td><td>Inspection Slider</td><td><b>${reportData.sliderPct}%</b></td></tr>
+                    </table>
+
+                    <h2>2. First Fresnel Zone & Obstacle Analysis</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <span class="label">Max Fresnel Radius (R₁)</span>
+                            <span class="val">${reportData.r1}</span>
+                        </div>
+                        <div class="card">
+                            <span class="label">60% Clearance Threshold</span>
+                            <span class="val">${reportData.threshold60}</span>
+                        </div>
                     </div>
+                    <div class="card" style="margin-bottom: 15px;">
+                        <span class="label">Obstacle Status</span>
+                        <span class="val">${reportData.obsStatus}</span>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <canvas id="pdfCanvas" width="600" height="200"></canvas>
+                    </div>
+
+                    <h2>3. Link Budget & Margin Results</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <span class="label">Free Space Path Loss (FSPL)</span>
+                            <span class="val">${reportData.fspl}</span>
+                        </div>
+                        <div class="card">
+                            <span class="label">Received Power (P<sub>rx</sub>)</span>
+                            <span class="val">${reportData.prx}</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <span class="label">Link Margin</span>
+                        <span class="val" style="font-size: 16px;">${reportData.margin}</span>
+                    </div>
+
                     <script>
                         window.onload = function() {
-                            const canvas = document.getElementById('fresnelCanvas');
+                            const canvas = document.getElementById('pdfCanvas');
                             if (canvas) {
                                 const ctx = canvas.getContext('2d');
                                 let startX = 40;
                                 let endX = canvas.width - 40;
-                                let centerY = canvas.height / 2;
-                                let maxRadiusPx = canvas.height * 0.35;
+                                let centerY = canvas.height / 2 - 10;
+                                let maxRadiusPx = canvas.height * 0.32;
 
+                                // Black & White Canvas Drawing
                                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                                // Line of sight
                                 ctx.beginPath();
-                                ctx.strokeStyle = '#94a3b8';
+                                ctx.strokeStyle = '#000000';
                                 ctx.setLineDash([4, 4]);
                                 ctx.moveTo(startX, centerY);
                                 ctx.lineTo(endX, centerY);
                                 ctx.stroke();
                                 ctx.setLineDash([]);
 
+                                // Fresnel Ellipse
                                 ctx.beginPath();
-                                ctx.strokeStyle = '#06b6d4';
+                                ctx.strokeStyle = '#000000';
                                 ctx.lineWidth = 2;
-                                let d1 = ${currentParams.d1};
-                                let d2 = ${currentParams.d2};
-                                let r1 = ${currentParams.r1};
-                                let h_obs = ${currentParams.h_obs};
-                                let sliderPct = ${currentParams.sliderPct};
-
                                 ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx, 0, 0, 2 * Math.PI);
-                                ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
-                                ctx.fill();
                                 ctx.stroke();
 
+                                // 60% Clearance
                                 ctx.beginPath();
-                                ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+                                ctx.strokeStyle = '#666666';
+                                ctx.setLineDash([2, 2]);
                                 ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx * 0.6, 0, 0, 2 * Math.PI);
                                 ctx.stroke();
+                                ctx.setLineDash([]);
 
-                                let controlX = startX + (endX - startX) * (sliderPct / 100);
-                                let obsHeightPx = Math.min((h_obs / r1) * maxRadiusPx, maxRadiusPx + 10);
-
+                                // Inspection point line
+                                let controlX = startX + (endX - startX) * (${reportData.sliderPct} / 100);
                                 ctx.beginPath();
-                                ctx.strokeStyle = '#f59e0b';
+                                ctx.strokeStyle = '#000000';
                                 ctx.lineWidth = 2;
                                 ctx.moveTo(controlX, centerY - maxRadiusPx);
                                 ctx.lineTo(controlX, centerY + maxRadiusPx);
                                 ctx.stroke();
 
-                                ctx.fillStyle = '#f8fafc';
-                                ctx.fillRect(startX - 3, centerY - 20, 6, 20);
-                                ctx.fillRect(endX - 3, centerY - 20, 6, 20);
+                                // Towers
+                                ctx.fillStyle = '#000000';
+                                ctx.fillRect(startX - 2, centerY - 25, 4, 25);
+                                ctx.fillRect(endX - 2, centerY - 25, 4, 25);
 
-                                ctx.fillStyle = '#94a3b8';
-                                ctx.font = '11px sans-serif';
-                                ctx.fillText('TX', startX - 6, centerY + 15);
-                                ctx.fillText('RX', endX - 6, centerY + 15);
-                                ctx.fillText('d₁ ' + d1.toFixed(2) + ' km', controlX - 35, centerY + maxRadiusPx + 15);
-                                ctx.fillText('d₂ ' + d2.toFixed(2) + ' km', endX - 60, centerY + maxRadiusPx + 15);
-                                ctx.fillStyle = '#f59e0b';
-                                ctx.fillText(r1.toFixed(2) + ' m', controlX + 5, centerY - maxRadiusPx - 5);
+                                ctx.font = '11px Arial';
+                                ctx.fillText('TX', startX - 6, centerY + 18);
+                                ctx.fillText('RX', endX - 6, centerY + 18);
+                                ctx.fillText('d₁ ${reportData.d1}', controlX - 30, centerY + maxRadiusPx + 20);
+                                ctx.fillText('d₂ ${reportData.d2}', endX - 55, centerY + maxRadiusPx + 20);
+                                ctx.fillText('R₁ ${reportData.r1}', controlX + 6, centerY - maxRadiusPx + 5);
                             }
                         };
                     <\/script>
@@ -635,7 +703,6 @@
             let centerY = height / 2 - 10;
             let maxRadiusPx = height * 0.32;
 
-            // Center Line-of-Sight
             ctx.beginPath();
             ctx.strokeStyle = '#94a3b8';
             ctx.setLineDash([4, 4]);
@@ -644,7 +711,6 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // 1st Fresnel Ellipse
             ctx.beginPath();
             ctx.strokeStyle = '#06b6d4';
             ctx.lineWidth = 2;
@@ -653,13 +719,11 @@
             ctx.fill();
             ctx.stroke();
 
-            // 60% Clearance Envelope
             ctx.beginPath();
             ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
             ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx * 0.6, 0, 0, 2 * Math.PI);
             ctx.stroke();
 
-            // Inspection Point (Yellow vertical line controlled by slider)
             let controlX = startX + (endX - startX) * (sliderPct / 100);
 
             ctx.beginPath();
@@ -669,7 +733,6 @@
             ctx.lineTo(controlX, centerY + maxRadiusPx);
             ctx.stroke();
 
-            // TX and RX towers
             ctx.fillStyle = '#06b6d4';
             ctx.beginPath();
             ctx.arc(startX, centerY, 4, 0, 2 * Math.PI);
@@ -685,11 +748,9 @@
             ctx.fillText('TX', startX - 6, centerY + 18);
             ctx.fillText('RX', endX - 6, centerY + 18);
 
-            // Labels under canvas
             ctx.fillText(`d₁ ${d1.toFixed(2)} km`, controlX - 30, centerY + maxRadiusPx + 20);
             ctx.fillText(`d₂ ${d2.toFixed(2)} km`, endX - 55, centerY + maxRadiusPx + 20);
 
-            // Radius text above yellow line
             ctx.fillStyle = '#f59e0b';
             ctx.font = 'bold 12px sans-serif';
             ctx.fillText(`${r1.toFixed(2)} m`, controlX + 6, centerY - maxRadiusPx + 5);
