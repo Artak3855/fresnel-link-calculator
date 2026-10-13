@@ -11,9 +11,16 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- html2canvas for JPG export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printableReport, #printableReport * { visibility: visible; }
+            #printableReport { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans p-4 md:p-8">
-    <div class="max-w-6xl mx-auto space-y-8" id="exportArea">
+    <div class="max-w-6xl mx-auto space-y-8">
         <!-- Header -->
         <header class="text-center">
             <h1 class="text-3xl md:text-4xl font-extrabold text-cyan-400 mb-2">Radio Link (Link Budget) & Fresnel Zone Calculator</h1>
@@ -100,13 +107,18 @@
                     <input type="number" id="sensitivity" value="-75" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
                 </div>
 
-                <button onclick="calculateAll()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-lg transition duration-200 shadow-lg mt-4">
-                    Calculate
-                </button>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="calculateAll()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-lg transition duration-200 shadow-lg">
+                        Calculate
+                    </button>
+                    <button onclick="resetForm()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold py-3 rounded-lg transition duration-200 shadow-lg">
+                        Reset
+                    </button>
+                </div>
             </div>
 
             <!-- Results & Visualization Panel -->
-            <div class="space-y-6 lg:col-span-2">
+            <div class="space-y-6 lg:col-span-2" id="printableReport">
                 <!-- Fresnel & Obstacle Card -->
                 <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700">
                     <h2 class="text-xl font-bold text-cyan-300 mb-4">1st Fresnel Zone & Obstacle</h2>
@@ -160,7 +172,7 @@
                             📄 Export PDF / Print
                         </button>
                         <button onclick="downloadJPG()" class="bg-slate-900 hover:bg-slate-700 text-cyan-400 border border-cyan-500/50 font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm flex items-center justify-center gap-2">
-                            📷 Download JPG
+                            📷 Download Instagram JPG (1080x1080)
                         </button>
                     </div>
                 </div>
@@ -239,6 +251,35 @@
         </div>
     </div>
 
+    <!-- Hidden Container for Instagram 1080x1080 JPG Export -->
+    <div id="instaExportCard" style="position: absolute; left: -9999px; top: -9999px; width: 1080px; height: 1080px; background-color: #0f172a; padding: 60px; display: flex; flex-direction: column; justify-content: space-between; font-family: sans-serif; color: #f8fafc;">
+        <div>
+            <h1 style="font-size: 42px; font-weight: 800; color: #22d3ee; margin: 0 0 10px 0;">Radio Link & Fresnel Summary</h1>
+            <p style="font-size: 20px; color: #94a3b8; margin: 0;">Professional RF Engineering Report</p>
+        </div>
+        <div style="background-color: #1e293b; padding: 40px; border-radius: 24px; border: 2px solid #334155; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div>
+                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Max Fresnel Radius (R1)</span>
+                <span id="insta_r1" style="font-size: 38px; font-weight: 800; color: #22d3ee;">0.00 m</span>
+            </div>
+            <div>
+                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Link Margin</span>
+                <span id="insta_margin" style="font-size: 38px; font-weight: 800; color: #4ade80;">0.00 dB</span>
+            </div>
+            <div>
+                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Received Power (Prx)</span>
+                <span id="insta_prx" style="font-size: 32px; font-weight: 800; color: #22d3ee;">0.00 dBm</span>
+            </div>
+            <div>
+                <span style="font-size: 16px; color: #94a3b8; display: block; margin-bottom: 8px;">Free Space Path Loss</span>
+                <span id="insta_fspl" style="font-size: 32px; font-weight: 800; color: #22d3ee;">0.00 dB</span>
+            </div>
+        </div>
+        <div style="text-align: center; color: #64748b; font-size: 18px; border-top: 1px solid #334155; pt: 20px;">
+            Generated via Fresnel Link Calculator
+        </div>
+    </div>
+
     <!-- JavaScript Logic -->
     <script>
         let calculationHistory = [];
@@ -312,6 +353,12 @@
                 marginBox.className = 'p-3 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-700 text-red-400';
             }
 
+            // Update hidden Instagram card values
+            document.getElementById('insta_r1').innerText = r1.toFixed(2) + ' m';
+            document.getElementById('insta_margin').innerText = marginStr;
+            document.getElementById('insta_prx').innerText = prx.toFixed(2) + ' dBm';
+            document.getElementById('insta_fspl').innerText = fspl.toFixed(2) + ' dB';
+
             drawFresnel(d1, d2, r1, h_obs);
 
             // Add to History
@@ -323,6 +370,23 @@
                 prx: prx.toFixed(2) + ' dBm',
                 params: { rawFreq, freqUnit, d1, d2, h_obs, ptx, gtx, grx, tx_loss, rx_loss, other_losses, req_margin, sensitivity }
             });
+        }
+
+        function resetForm() {
+            document.getElementById('freq').value = '5.8';
+            document.getElementById('freq_unit').value = 'GHz';
+            document.getElementById('d1').value = '5';
+            document.getElementById('d2').value = '5';
+            document.getElementById('h_obs').value = '3';
+            document.getElementById('ptx').value = '20';
+            document.getElementById('gtx').value = '25';
+            document.getElementById('grx').value = '25';
+            document.getElementById('tx_loss').value = '1';
+            document.getElementById('rx_loss').value = '1';
+            document.getElementById('other_losses').value = '0';
+            document.getElementById('req_margin').value = '10';
+            document.getElementById('sensitivity').value = '-75';
+            calculateAll();
         }
 
         function addHistoryRecord(record) {
@@ -384,11 +448,11 @@
         }
 
         function downloadJPG() {
-            const element = document.getElementById('exportArea');
-            html2canvas(element, { backgroundColor: '#0f172a', scale: 2 }).then(canvas => {
+            const element = document.getElementById('instaExportCard');
+            html2canvas(element, { backgroundColor: '#0f172a', scale: 1, width: 1080, height: 1080 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'fresnel-link-report.jpg';
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.download = 'fresnel-link-instagram.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             });
         }
