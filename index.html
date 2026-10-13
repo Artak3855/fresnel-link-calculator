@@ -22,13 +22,13 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Inputs Panel -->
-            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4">
+            <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700 lg:col-span-1 space-y-4" id="inputsPanel">
                 <h2 class="text-xl font-bold text-cyan-300 border-b border-slate-700 pb-2">Input Parameters</h2>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sm font-medium mb-1">Frequency</label>
-                        <input type="number" id="freq" value="5.8" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="freq" value="5.8" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Unit</label>
@@ -42,62 +42,72 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sm font-medium mb-1">Distance d<sub>1</sub> (km)</label>
-                        <input type="number" id="d1" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="d1" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="onDistanceInput()">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Distance d<sub>2</sub> (km)</label>
-                        <input type="number" id="d2" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="d2" value="5" step="0.1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="onDistanceInput()">
                     </div>
+                </div>
+
+                <!-- Interactive Path Slider -->
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-300 font-medium">Inspection point along path</span>
+                        <span id="slider_pct_label" class="text-cyan-400 font-bold">50.0%</span>
+                    </div>
+                    <input type="range" id="pathSlider" min="1" max="99" value="50" step="1" class="w-full accent-cyan-400 cursor-pointer" oninput="onSliderMove()">
+                    <p class="text-[11px] text-slate-500">Drag the slider to explore the first Fresnel zone along the link path.</p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Obstacle Height (h<sub>obs</sub>, m)</label>
-                    <input type="number" id="h_obs" value="3" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    <input type="number" id="h_obs" value="3" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                 </div>
 
                 <hr class="border-slate-700 my-2">
 
                 <div>
                     <label class="block text-sm font-medium mb-1">TX Power (P<sub>tx</sub>, dBm)</label>
-                    <input type="number" id="ptx" value="20" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    <input type="number" id="ptx" value="20" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sm font-medium mb-1">TX Antenna Gain (G<sub>tx</sub>, dBi)</label>
-                        <input type="number" id="gtx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="gtx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">RX Antenna Gain (G<sub>rx</sub>, dBi)</label>
-                        <input type="number" id="grx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="grx" value="25" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sm font-medium mb-1">TX Cable Loss (dB)</label>
-                        <input type="number" id="tx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="tx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">RX Cable Loss (dB)</label>
-                        <input type="number" id="rx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="rx_loss" value="1" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-sm font-medium mb-1">Other Losses (dB)</label>
-                        <input type="number" id="other_losses" value="0" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="other_losses" value="0" step="0.5" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Required Margin (dB)</label>
-                        <input type="number" id="req_margin" value="10" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                        <input type="number" id="req_margin" value="10" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Receiver Sensitivity (dBm)</label>
-                    <input type="number" id="sensitivity" value="-75" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400">
+                    <input type="number" id="sensitivity" value="-75" step="1" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-2.5 text-white focus:outline-none focus:border-cyan-400" oninput="calculateAll()">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 pt-2">
@@ -114,7 +124,10 @@
             <div class="space-y-6 lg:col-span-2">
                 <!-- Fresnel & Obstacle Card -->
                 <div class="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700" id="fresnelCard">
-                    <h2 class="text-xl font-bold text-cyan-300 mb-4">1st Fresnel Zone & Obstacle</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-cyan-300">First Fresnel zone</h2>
+                        <span id="total_distance_badge" class="bg-slate-900 border border-slate-700 px-3 py-1 rounded-full text-xs font-semibold text-cyan-400">10.00 KM</span>
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
@@ -244,7 +257,7 @@
         </div>
     </div>
 
-    <!-- Hidden Container for Instagram 1080x1080 JPG Export (Requested exact fields) -->
+    <!-- Hidden Container for Instagram 1080x1080 JPG Export -->
     <div id="instaExportCard" style="position: absolute; left: -9999px; top: -9999px; width: 1080px; height: 1080px; background-color: #0f172a; padding: 50px; display: flex; flex-direction: column; justify-content: space-between; font-family: sans-serif; color: #f8fafc;">
         <div>
             <h1 style="font-size: 38px; font-weight: 800; color: #22d3ee; margin: 0 0 8px 0;">Radio Link & Fresnel Summary</h1>
@@ -292,6 +305,45 @@
     <!-- JavaScript Logic -->
     <script>
         let calculationHistory = [];
+        let currentParams = { d1: 5, d2: 5, r1: 11.37, h_obs: 3, sliderPct: 50 };
+        let isUpdatingSlider = false;
+
+        function onSliderMove() {
+            isUpdatingSlider = true;
+            const pct = parseFloat(document.getElementById('pathSlider').value);
+            document.getElementById('slider_pct_label').innerText = pct.toFixed(1) + '%';
+            
+            let d1Field = document.getElementById('d1');
+            let d2Field = document.getElementById('d2');
+            
+            // Assume total distance is fixed based on current d1 + d2 sum
+            let totalD = parseFloat(d1Field.value) + parseFloat(d2Field.value);
+            if (isNaN(totalD) || totalD <= 0) totalD = 10;
+
+            let newD1 = (totalD * pct) / 100;
+            let newD2 = totalD - newD1;
+
+            d1Field.value = newD1.toFixed(2);
+            d2Field.value = newD2.toFixed(2);
+
+            calculateAll();
+            isUpdatingSlider = false;
+        }
+
+        function onDistanceInput() {
+            if (isUpdatingSlider) return;
+            let d1 = parseFloat(document.getElementById('d1').value) || 0;
+            let d2 = parseFloat(document.getElementById('d2').value) || 0;
+            let totalD = d1 + d2;
+
+            if (totalD > 0) {
+                let pct = (d1 / totalD) * 100;
+                let slider = document.getElementById('pathSlider');
+                slider.value = Math.max(1, Math.min(99, pct));
+                document.getElementById('slider_pct_label').innerText = pct.toFixed(1) + '%';
+            }
+            calculateAll();
+        }
 
         function calculateAll() {
             let rawFreq = parseFloat(document.getElementById('freq').value);
@@ -316,9 +368,13 @@
 
             let r1 = 17.32 * Math.sqrt((d1 * d2) / (f * totalD));
             let threshold60 = 0.6 * r1;
+            let sliderPct = parseFloat(document.getElementById('pathSlider').value);
+
+            currentParams = { d1, d2, r1, h_obs, sliderPct };
 
             document.getElementById('res_r1').innerText = r1.toFixed(2) + ' m';
             document.getElementById('res_60').innerText = threshold60.toFixed(2) + ' m';
+            document.getElementById('total_distance_badge').innerText = totalD.toFixed(2) + ' KM';
 
             let obsStatusElem = document.getElementById('res_obs_status');
             let obsText = '';
@@ -364,7 +420,7 @@
 
             // Update Instagram card values
             document.getElementById('ins_freq').innerText = rawFreq + ' ' + freqUnit;
-            document.getElementById('ins_dist').innerText = d1 + ' / ' + d2 + ' km';
+            document.getElementById('ins_dist').innerText = d1.toFixed(1) + ' / ' + d2.toFixed(1) + ' km';
             document.getElementById('ins_ptx').innerText = ptx + ' dBm';
             document.getElementById('ins_gain').innerText = gtx + ' / ' + grx + ' dBi';
 
@@ -372,8 +428,8 @@
             document.getElementById('insta_prx').innerText = prx.toFixed(2) + ' dBm';
             document.getElementById('insta_margin').innerText = marginStr;
 
-            drawCanvas('fresnelCanvas', d1, d2, r1, h_obs);
-            drawCanvas('instaCanvas', d1, d2, r1, h_obs);
+            drawCanvas('fresnelCanvas', d1, d2, r1, h_obs, sliderPct);
+            drawCanvas('instaCanvas', d1, d2, r1, h_obs, sliderPct);
 
             // Add to History
             addHistoryRecord({
@@ -382,7 +438,7 @@
                 dist: totalD.toFixed(1) + ' km',
                 margin: marginStr,
                 prx: prx.toFixed(2) + ' dBm',
-                params: { rawFreq, freqUnit, d1, d2, h_obs, ptx, gtx, grx, tx_loss, rx_loss, other_losses, req_margin, sensitivity }
+                params: { rawFreq, freqUnit, d1, d2, h_obs, ptx, gtx, grx, tx_loss, rx_loss, other_losses, req_margin, sensitivity, sliderPct }
             });
         }
 
@@ -391,6 +447,8 @@
             document.getElementById('freq_unit').value = 'GHz';
             document.getElementById('d1').value = '5';
             document.getElementById('d2').value = '5';
+            document.getElementById('pathSlider').value = '50';
+            document.getElementById('slider_pct_label').innerText = '50.0%';
             document.getElementById('h_obs').value = '3';
             document.getElementById('ptx').value = '20';
             document.getElementById('gtx').value = '25';
@@ -440,6 +498,8 @@
             document.getElementById('freq_unit').value = p.freqUnit;
             document.getElementById('d1').value = p.d1;
             document.getElementById('d2').value = p.d2;
+            document.getElementById('pathSlider').value = p.sliderPct;
+            document.getElementById('slider_pct_label').innerText = p.sliderPct.toFixed(1) + '%';
             document.getElementById('h_obs').value = p.h_obs;
             document.getElementById('ptx').value = p.ptx;
             document.getElementById('gtx').value = p.gtx;
@@ -463,7 +523,7 @@
             const linkBudgetCard = document.getElementById('linkBudgetCard').outerHTML;
             const theoryCard = document.getElementById('theoryCard').outerHTML;
 
-            const pdfContent = `
+            const htmlContent = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -479,12 +539,76 @@
                         ${linkBudgetCard}
                         ${theoryCard}
                     </div>
+                    <script>
+                        window.onload = function() {
+                            const canvas = document.getElementById('fresnelCanvas');
+                            if (canvas) {
+                                const ctx = canvas.getContext('2d');
+                                let startX = 40;
+                                let endX = canvas.width - 40;
+                                let centerY = canvas.height / 2;
+                                let maxRadiusPx = canvas.height * 0.35;
+
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                ctx.beginPath();
+                                ctx.strokeStyle = '#94a3b8';
+                                ctx.setLineDash([4, 4]);
+                                ctx.moveTo(startX, centerY);
+                                ctx.lineTo(endX, centerY);
+                                ctx.stroke();
+                                ctx.setLineDash([]);
+
+                                ctx.beginPath();
+                                ctx.strokeStyle = '#06b6d4';
+                                ctx.lineWidth = 2;
+                                let d1 = ${currentParams.d1};
+                                let d2 = ${currentParams.d2};
+                                let r1 = ${currentParams.r1};
+                                let h_obs = ${currentParams.h_obs};
+                                let sliderPct = ${currentParams.sliderPct};
+
+                                ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx, 0, 0, 2 * Math.PI);
+                                ctx.fillStyle = 'rgba(6, 182, 212, 0.05)';
+                                ctx.fill();
+                                ctx.stroke();
+
+                                ctx.beginPath();
+                                ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+                                ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx * 0.6, 0, 0, 2 * Math.PI);
+                                ctx.stroke();
+
+                                let controlX = startX + (endX - startX) * (sliderPct / 100);
+                                let obsHeightPx = Math.min((h_obs / r1) * maxRadiusPx, maxRadiusPx + 10);
+
+                                ctx.beginPath();
+                                ctx.strokeStyle = '#f59e0b';
+                                ctx.lineWidth = 2;
+                                ctx.moveTo(controlX, centerY - maxRadiusPx);
+                                ctx.lineTo(controlX, centerY + maxRadiusPx);
+                                ctx.stroke();
+
+                                ctx.fillStyle = '#f8fafc';
+                                ctx.fillRect(startX - 3, centerY - 20, 6, 20);
+                                ctx.fillRect(endX - 3, centerY - 20, 6, 20);
+
+                                ctx.fillStyle = '#94a3b8';
+                                ctx.font = '11px sans-serif';
+                                ctx.fillText('TX', startX - 6, centerY + 15);
+                                ctx.fillText('RX', endX - 6, centerY + 15);
+                                ctx.fillText('d₁ ' + d1.toFixed(2) + ' km', controlX - 35, centerY + maxRadiusPx + 15);
+                                ctx.fillText('d₂ ' + d2.toFixed(2) + ' km', endX - 60, centerY + maxRadiusPx + 15);
+                                ctx.fillStyle = '#f59e0b';
+                                ctx.fillText(r1.toFixed(2) + ' m', controlX + 5, centerY - maxRadiusPx - 5);
+                            }
+                        };
+                    <\/script>
                 </body>
                 </html>
             `;
-            const blob = new Blob([pdfContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, '_blank');
         }
 
         function downloadJPG() {
@@ -497,7 +621,7 @@
             });
         }
 
-        function drawCanvas(canvasId, d1, d2, r1, h_obs) {
+        function drawCanvas(canvasId, d1, d2, r1, h_obs, sliderPct) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -508,9 +632,10 @@
 
             let startX = 40;
             let endX = width - 40;
-            let centerY = height / 2;
-            let maxRadiusPx = height * 0.35;
+            let centerY = height / 2 - 10;
+            let maxRadiusPx = height * 0.32;
 
+            // Center Line-of-Sight
             ctx.beginPath();
             ctx.strokeStyle = '#94a3b8';
             ctx.setLineDash([4, 4]);
@@ -519,6 +644,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
+            // 1st Fresnel Ellipse
             ctx.beginPath();
             ctx.strokeStyle = '#06b6d4';
             ctx.lineWidth = 2;
@@ -527,29 +653,46 @@
             ctx.fill();
             ctx.stroke();
 
+            // 60% Clearance Envelope
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
             ctx.ellipse((startX + endX) / 2, centerY, (endX - startX) / 2, maxRadiusPx * 0.6, 0, 0, 2 * Math.PI);
             ctx.stroke();
 
-            let controlX = startX + (endX - startX) * (d1 / (d1 + d2));
-            let obsHeightPx = Math.min((h_obs / r1) * maxRadiusPx, maxRadiusPx + 10);
+            // Inspection Point (Yellow vertical line controlled by slider)
+            let controlX = startX + (endX - startX) * (sliderPct / 100);
 
             ctx.beginPath();
-            ctx.strokeStyle = h_obs <= (0.6 * r1) ? '#22c55e' : (h_obs <= r1 ? '#f59e0b' : '#ef4444');
-            ctx.lineWidth = 4;
-            ctx.moveTo(controlX, centerY);
-            ctx.lineTo(controlX, centerY - obsHeightPx);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2;
+            ctx.moveTo(controlX, centerY - maxRadiusPx);
+            ctx.lineTo(controlX, centerY + maxRadiusPx);
             ctx.stroke();
 
+            // TX and RX towers
+            ctx.fillStyle = '#06b6d4';
+            ctx.beginPath();
+            ctx.arc(startX, centerY, 4, 0, 2 * Math.PI);
+            ctx.arc(endX, centerY, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
             ctx.fillStyle = '#f8fafc';
-            ctx.fillRect(startX - 3, centerY - 20, 6, 20);
-            ctx.fillRect(endX - 3, centerY - 20, 6, 20);
+            ctx.fillRect(startX - 2, centerY - 25, 4, 25);
+            ctx.fillRect(endX - 2, centerY - 25, 4, 25);
 
             ctx.fillStyle = '#94a3b8';
             ctx.font = '11px sans-serif';
-            ctx.fillText('Tx', startX - 6, centerY + 15);
-            ctx.fillText('Rx', endX - 6, centerY + 15);
+            ctx.fillText('TX', startX - 6, centerY + 18);
+            ctx.fillText('RX', endX - 6, centerY + 18);
+
+            // Labels under canvas
+            ctx.fillText(`d₁ ${d1.toFixed(2)} km`, controlX - 30, centerY + maxRadiusPx + 20);
+            ctx.fillText(`d₂ ${d2.toFixed(2)} km`, endX - 55, centerY + maxRadiusPx + 20);
+
+            // Radius text above yellow line
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText(`${r1.toFixed(2)} m`, controlX + 6, centerY - maxRadiusPx + 5);
         }
 
         window.onload = calculateAll;
